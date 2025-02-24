@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dragon Ball</title>
+
+    <style>
+        body {
+            text-align: center;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            color: #ff9800;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 200px;
+        }
+        button {
+            padding: 8px 12px;
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        button:hover {
+            background-color: #e68900;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+        img {
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Busca un personaje de Dragon Ball</h1>
+
+    <form id="form">
+        <input type="text" id="texto" placeholder="Introduce un número" required>
+        <button type="submit">Buscar</button>
+    </form>
+
+    <div id="resultado"></div>
+
+    <script>
+        document.getElementById("form").addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            let valor = document.getElementById("texto").value.trim();
+            if (!/^\d+$/.test(valor)) return alert("Introduce un número válido.");
+
+            fetch(`php/api.php?numero=${valor}`)
+                .then(response => response.json())
+                .then(data => {
+                    let result = data.error ? `<p>Error: ${data.error}</p>` : `
+                        <h2>${data.name || "Nombre no encontrado"}</h2>
+                        <img src="${data.image || ""}" width="200">
+                        <p>Raza: ${data.race || "Desconocida"}</p>
+                        <p>Origen: ${data.planet || "Desconocido"}</p>
+                    `;
+                    document.getElementById("resultado").innerHTML = result;
+                })
+                .catch(() => document.getElementById("resultado").innerHTML = `<p>Error al obtener datos.</p>`);
+        });
+    </script>
+
+</body>
+</html>
